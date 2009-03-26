@@ -11,7 +11,7 @@
  * @ingroup Extensions
  * @author Adam Franco <afranco@middlebury.edu>
  * @version 1.0
- * @link http://www.mediawiki.org/wiki/Extension:MyExtension Documentation
+ * @link https://www.assembla.com/wiki/show/MiddMedia/MediaWiki_Plugin Documentation
  * @license http://www.gnu.org/copyleft/gpl.html GNU General Public License 2.0 or later
  */
  
@@ -29,7 +29,7 @@ $wgExtensionCredits['parserhook'][] = array(
 	'name'         => 'MiddMedia',
 	'version'      => '1.0',
 	'author'       => 'Adam Franco (Middlebury College)', 
-//	'url'          => 'http://www.mediawiki.org/wiki/Extension:MyExtension',
+	'url'          => 'https://www.assembla.com/wiki/show/MiddMedia/MediaWiki_Plugin',
 	'description'  => 'A custom tag extension for displaying MiddMedia video files. <br/>Example usage: <br/><code><nowiki><middmedia height="160px" width="300px" dir="afranco" file="MIDDLEBURY KICKOFF.mp4"/></nowiki></code><br/><middmedia height="160px" width="300px" dir="afranco" file="MIDDLEBURY KICKOFF.mp4"/>'
 );
 
