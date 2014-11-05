@@ -68,27 +68,62 @@ function middmediaRender ( $input, $args, $parser ) {
 	
 	$dir = rawurlencode($args['dir']);
 	$thumbFile = rawurlencode($parts['filename'].'.jpg');
+	$file = rawurlencode($parts['basename']);
+	$extension = strtolower($parts['extension']);
 	
-	switch (strtolower($parts['extension'])) {
-		case 'mp3':
-			$file = rawurlencode($parts['basename']);
-			$id = md5($dir.'/'.$file);
-			return '
+	if ($extension == 'm4a') {
+		if (strpos($_SERVER['HTTP_USER_AGENT'], 'Safari') !== FALSE &&
+			strpos($_SERVER['HTTP_USER_AGENT'], 'Chrome') === FALSE &&
+			strpos($_SERVER['HTTP_USER_AGENT'], 'Version/5') !== FALSE) 
+		{
+		  return '<video width="{$width}" height="{$height}"controls="controls" src="http://middmedia.middlebury.edu/media/{$dir}/m4a/'. $file .'">';
+		} else {
+		  return '<a href="http://middmedia.middlebury.edu/media/{$dir}/m4a/'. $file .'">'. htmlentities($parts['basename']) .'</a>';
+		}
+	} 
+	else if ($extension == 'mp3') {
+		$html5 = strpos($_SERVER['HTTP_USER_AGENT'], 'Chrome') !== FALSE || strpos($_SERVER['HTTP_USER_AGENT'], 'Safari') !== FALSE;
+		
+		ob_start();
+		if ($html5) {
+			print '<audio src="http://middmedia.middlebury.edu/media/'. $dir .'/mp3/'. $file .'" controls="true" preload="none">';
+		}
+		
+		$id = md5($dir.'/'.$file);
+		print '
 <script type="text/javascript" src="http://middmedia.middlebury.edu/AudioPlayer/audio-player.js"></script><object width="290" height="24" id="'.$id.'" data="http://middmedia.middlebury.edu/AudioPlayer/player.swf" type="application/x-shockwave-flash"><param value="http://middmedia.middlebury.edu/AudioPlayer/player.swf" name="movie" /><param value="high" name="quality" /><param value="false" name="menu" /><param value="transparent" name="wmode" /><param value="soundFile=http://middmedia.middlebury.edu/media/'.$dir.'/'.$file.'" name="FlashVars" /></object>
-';	
-		case 'flv':
-			$prefix = '';
-			$file = rawurlencode($parts['filename']);
-			break;
-		default:
-			$prefix = rawurlencode(strtolower($parts['extension']).':');
-			$file = rawurlencode($parts['basename']);
+';
+		if ($html5) {
+			print "</audio>";
+		}
+		return ob_get_clean();
 	}
-	
-	return <<< END
-
-<embed src="http://middmedia.middlebury.edu/flowplayer/FlowPlayerLight.swf?config=%7Bembedded%3Atrue%2CstreamingServerURL%3A%27rtmp%3A%2F%2Fmiddmedia.middlebury.edu%2Fvod%27%2CautoPlay%3Afalse%2Cloop%3Afalse%2CinitialScale%3A%27fit%27%2CvideoFile%3A%27{$prefix}{$dir}%2F{$file}%27%2CsplashImageFile%3A%27http://middmedia.middlebury.edu/media/{$dir}/splash/{$thumbFile}%27%7D" width="{$width}" height="{$height}" scale="fit" bgcolor="#111111" type="application/x-shockwave-flash" allowFullScreen="true" allowNetworking="all" pluginspage="http://www.macromedia.com/go/getflashplayer"></embed>
-
-END;
+	// Video
+	else {		
+		$splashImage = 'http://middmedia.middlebury.edu/media/'. $dir . '/splash/' . $thumbFile;
+		ob_start();
+		if ($extension != 'flv') {
+			print '<video width="'. $width .'" height="'. $height .'" controls="true" poster="'. $splashImage .'">';
+			print '<source src="http://middmedia.middlebury.edu/media/'. $dir .'/mp4/'. $parts['filename'] .'.mp4" type=\'video/mp4; codecs="avc1.42E01E, mp4a.40.2"\' />';
+			print '<source src="http://middmedia.middlebury.edu/media/'. $dir .'/webm/'. $parts['filename'] .'.webm" type=\'video/webm; codecs="vp8, vorbis"\' />'; 
+		}
+		
+		
+		print '<object classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000" codebase="http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=10,0,0,0" width="' . $width . '" height="' . $height . '">';
+		print '<param name="movie" value="http://middmedia.middlebury.edu/strobe_mp/StrobeMediaPlayback.swf"></param>';
+		print '<param name="FlashVars" value="src=http://middmedia.middlebury.edu/media/' . $dir .'/mp4/'. $parts['filename'] .'.mp4&poster=' . urlencode($splashImage) . '"></param>';
+		print '<param name="allowFullScreen" value="true"></param>';
+		print '<param name="allowscriptaccess" value="always"></param>';
+		print '<embed src="http://middmedia.middlebury.edu/strobe_mp/StrobeMediaPlayback.swf" type="application/x-shockwave-flash" allowscriptaccess="always" allowfullscreen="true" width="' . $width . '" height="' . $height . '" FlashVars="src=http://middmedia.middlebury.edu/media/' . $dir .'/mp4/'. $parts['filename'] .'.mp4&poster=' . urlencode($splashImage) . '">';
+		print '</embed>';
+		print '</object>';
+		
+		
+		if ($extension != 'flv') {
+			print "</video>";
+		}
+		
+		return ob_get_clean();
+	}
 }
 
