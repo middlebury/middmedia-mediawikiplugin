@@ -9,8 +9,8 @@
  *
  **/
 
-$magicWords = [];
+$magicWords = array();
 
-$magicWords['en'] = [
-	'middmedia'	=> [0, 'middmedia'],
-];
+$magicWords['en'] = array(
+	'middmedia'	=> array(0, 'middmedia'),
+);
