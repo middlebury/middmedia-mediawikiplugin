@@ -1,0 +1,23 @@
+{
+	"name": "MiddMedia",
+	"version": "1.0",
+	"author": [
+		"Adam Franco (Middlebury College)"
+	],
+	"url": "https://github.com/middlebury/middmedia-mediawikiplugin",
+	"descriptionmsg": "",
+	"license-name": "GPL-2.0+",
+	"type": "parserhook",
+	"AutoloadClasses": {
+		"MiddMediaExtension": "MiddMedia.class.php"
+	},
+	"ExtensionMessagesFiles": {
+		"MiddMediaExtension": "MiddMedia.i18n.magic.php"
+	},
+	"Hooks": {
+		"ParserFirstCallInit": [
+			"MiddMediaExtension::middmediaInit"
+		]
+	},
+	"manifest_version": 1
+}
